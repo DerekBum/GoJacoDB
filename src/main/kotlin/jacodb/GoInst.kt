@@ -237,6 +237,19 @@ class GoDebugRefInst(
     }
 }
 
+class GoNullInst(parent: GoMethod) : AbstractGoInst(GoInstLocationImpl(
+    -1, -1, parent
+), parent) {
+    override val operands: List<GoExpr>
+        get() = emptyList()
+
+    override fun toString(): String = "null"
+
+    override fun <T> accept(visitor: GoInstVisitor<T>): T {
+        return visitor.visitGoNullInst(this)
+    }
+}
+
 interface GoExpr : CoreExpr<GoType, GoValue> {
     override val type: GoType
     override val operands: List<GoValue>
@@ -1088,10 +1101,18 @@ data class GoFunction(
         if (flowGraph == null) {
             flowGraph = GoBlockGraph(
                 blocks,
-                listOf<GoInst>() // TODO
+                blocks.flatMap { it.insts }
             ).graph
         }
         return flowGraph!!
+    }
+
+    override fun hashCode(): Int {
+        return packageName.hashCode() * 31 + metName.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return super.equals(other)
     }
 
     override fun <T> accept(visitor: GoExprVisitor<T>): T {

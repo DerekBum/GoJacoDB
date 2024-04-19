@@ -18,6 +18,8 @@ interface GoInstVisitor<T> : InstVisitor<T> {
     fun visitExternalGoInst(inst: GoInst): T
 
     fun visitGoCallInst(inst: GoCallInst): T
+
+    fun visitGoNullInst(inst: GoNullInst): T
 }
 
 interface GoExprVisitor<T> : CoreExprVisitor<T> {
